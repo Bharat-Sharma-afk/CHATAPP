@@ -1,6 +1,7 @@
 CHATBOX
 
 Chatbox is a GUI based Python Program for Messaging.
+**Note this Project is still under Progress and is Vulnerable to Crashing
 
 Requirements:
 1.  Python 3.9.1 or above
