@@ -12,7 +12,7 @@ Requirements:
 Installation:
 1. Downlaod app.py and gui.py in a Directory
 2. Enter "python app.py" in Terminal
-3. Or Just Download app.exe and run it
+3. Or Just Download app.exe from "https://drive.google.com/file/d/1tpw1JGC2VHjoMitvy9SgI-qFus4oqwoK/view?usp=sharing" and run it
 
 How to Chat:
 1. Upon Running the app first time, You will see a register Screen
