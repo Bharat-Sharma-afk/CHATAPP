@@ -14,15 +14,16 @@ class Window(QtWidgets.QTabWidget):
         super().__init__()
         self.setWindowTitle("CHATBOX")
         self.setGeometry(300, 300,700,850)
+        self.setFixedSize(870,850)
         self.move(100,10)
         self.setStyleSheet("background: white;")  
-        self.setStyleSheet("color: white; background: #242926")
+        self.setStyleSheet("color: white; background: #4fb477")
         self.recievers=[]
         self.recievers_phn=[]
         self.chats=[]
         self.msg = ""
         self.selected_chat='0'
-        self.n_grok="http://127.0.0.1:5000"
+        self.n_grok='http://intruder.pythonanywhere.com'
         self.cur_usr=current_user
         self.status = "Not Connected"
      
@@ -36,9 +37,11 @@ class Window(QtWidgets.QTabWidget):
         #print("reg")
         reg_form = QFormLayout()
         phn = QLineEdit()
+        phn.setStyleSheet("background-color : #c0c4c2; color: #3c3747; font-size: 20px")
         phn.textChanged.connect(self.reg_phn)
         
         name = QLineEdit()
+        name.setStyleSheet("background-color : #c0c4c2; color: #3c3747; font-size: 13px")
         name.textChanged.connect(self.reg_name)
 
         reg_button = QPushButton("Register")
@@ -63,30 +66,31 @@ class Window(QtWidgets.QTabWidget):
         self.reg_usname = text
 
     def reg_btn(self):
-        print("rat")
         if(len(self.n_grok)>5):
-            r = requests.get(self.n_grok +"/get_user/"+str(self.reg_phoneno))
-            r=r.json()
-            if(r == "0"):
-                r = requests.get(self.n_grok +"/registration/"+str(self.reg_phoneno)+"/"+str(self.reg_usname))
-                rec_file = open("reciever.usr","w+")
-                rec_file.write(str(self.reg_phoneno) + " " + str(self.reg_usname))
-                rec_file.close()
-                self.hide()
-                self.__init__(str(self.reg_phoneno) + " " + str(self.reg_usname))
-                self.show()
-                    
-            else:
-                if(r[str(self.reg_phoneno)] != str(self.reg_usname)):
-                    print("User Already Registered...\n But Wrong User Name Entered")
-                else:
+            try:
+                r = requests.get(self.n_grok +"/get_user/"+str(self.reg_phoneno))
+                r=r.json()
+                if(r == "0" or r== 0):
+                    r = requests.get(self.n_grok +"/registration/"+str(self.reg_phoneno)+"/"+str(self.reg_usname))
                     rec_file = open("reciever.usr","w+")
-                    rec_file.write(str(self.reg_phoneno) + " " + str(self.reg_usname))
+                    rec_file.write(str(self.reg_phoneno) + " " + str(self.reg_usname)+"\n")
                     rec_file.close()
                     self.hide()
-                    self.__init__(str(self.reg_phoneno) + " " + str(self.reg_usname))
+                    self.__init__(str(self.reg_phoneno) + " " + str(self.reg_usname)+"\n")
                     self.show()
-                    
+                        
+                else:
+                    if(r[str(self.reg_phoneno)] != str(self.reg_usname)):
+                        pass#print("User Already Registered...\n But Wrong User Name Entered")
+                    else:
+                        rec_file = open("reciever.usr","w+")
+                        rec_file.write(str(self.reg_phoneno) + " " + str(self.reg_usname)+"\n")
+                        rec_file.close()
+                        self.hide()
+                        self.__init__(str(self.reg_phoneno) + " " + str(self.reg_usname)+"\n")
+                        self.show()
+            except:
+                pass            
                     
 
     def user_in_UI(self):
@@ -100,8 +104,7 @@ class Window(QtWidgets.QTabWidget):
         else:
             x=self.cur_usr
         user_lbl = QLabel(x[11:] + "\n" + x[:10])
-        user_lbl.setStyleSheet("border: 1px solid white; color: black; font-family: SansSerif; font-size: 28px; background-color : #dee3fa;")
-        user_lbl.setFont(QFont('Arial', 30))
+        user_lbl.setStyleSheet("border: 0px solid white; color: #ad5b57; font-family: cursive; letter-spacing: 1.2px; font-size: 28px; background-color : #161a18;")
         user_lbl.setAlignment(Qt.AlignCenter)
         r_pane.addWidget(user_lbl)
 
@@ -112,7 +115,7 @@ class Window(QtWidgets.QTabWidget):
         addnewchat_layout = QHBoxLayout()
         addnewchat_layout.addWidget(QLabel("Add  "))
         self.add_chat = QLineEdit()
-        self.add_chat.setStyleSheet("background-color : #c0c4c2;")
+        self.add_chat.setStyleSheet("background-color : #c0c4c2; color: #3c3747; font-size: 18px")
         self.add_chat.textChanged.connect(self.newchatchanged)
         self.add_chat.editingFinished.connect(self.addnewchat)
         addnewchat_layout.addWidget(self.add_chat)
@@ -127,10 +130,12 @@ class Window(QtWidgets.QTabWidget):
             if(self.recievers[i][0]==self.selected_chat):
                 self.recievers_btns[i].setStyleSheet("QPushButton"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #409399;"
                                 "}"
                                 "QPushButton::pressed"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #409399;"
                                 "}"
                                 )
@@ -138,10 +143,12 @@ class Window(QtWidgets.QTabWidget):
             else:
                 self.recievers_btns[i].setStyleSheet("QPushButton"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #4d74bd;"
                                 "}"
                                 "QPushButton::pressed"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #409399;"
                                 "}"
                                 )
@@ -162,7 +169,7 @@ class Window(QtWidgets.QTabWidget):
         #Msg Pane
         msg_s_r_pane = QVBoxLayout()
         title = QLabel("CHATBOX")
-        title.setStyleSheet("border: 2px solid white; color:#3a54c9; SansSerif; font-size: 78px; background-color : #7cfcbc;")
+        title.setStyleSheet("border: 0px solid white; color:#3a54c9; cursive; font-size: 78px; letter-spacing: 3px; background-color : #161a18;")
         title.setIndent(10)
         title.setAlignment(Qt.AlignCenter)
         msg_s_r_pane.addWidget(title)
@@ -193,7 +200,7 @@ class Window(QtWidgets.QTabWidget):
         #Send Pane
         send = QHBoxLayout()
         self.send_box = QLineEdit()
-        self.send_box.setStyleSheet("background-color : #c0c4c2;")
+        self.send_box.setStyleSheet("background-color : #c0c4c2; color: #3c3747; font-size: 18px")
         self.send_box.textChanged.connect(self.msgChanged)
         self.send_box.editingFinished.connect(self.send_msg)
 
@@ -201,10 +208,12 @@ class Window(QtWidgets.QTabWidget):
         self.send_btn.clicked.connect(self.send_msg)
         self.send_btn.setStyleSheet("QPushButton"
                                 "{"
+                                "font-size: 13px;"
                                 "background-color : #000080;"
                                 "}"
                                 "QPushButton::pressed"
                                 "{"
+                                "font-size: 13px;"
                                 "background-color : purple;"
                                 "}"
                                 )
@@ -227,29 +236,31 @@ class Window(QtWidgets.QTabWidget):
         self.new_chat = text
     
     def addnewchat(self):
-        print(self.new_chat)
-        print(self.n_grok)
         if(len(self.new_chat) == 10 and (len(self.n_grok)>5)):
-            r = requests.get(self.n_grok +"/get_user/"+str(self.new_chat))
-            print(self.n_grok +"/get_user/"+str(self.new_chat))
-            r=(r.json())
-            print(r)
-            
-            if(r == "0"):
-                print("User doesn't exist")
-            else:
-                x=''
-                for i in r:
-                    x = (i,r[i])
-                self.recievers.insert(0,(x[0], x[1]))
-                r_file = open("reciever.usr","a")
-                r_file.write("\n"+x[0]+" "+ x[1])
-                r_file.close()
+            try:
+                r = requests.get(self.n_grok +"/get_user/"+str(self.new_chat))
+                r=(r.json())
+                
+                if(r == "0"):
+                    pass#print("User doesn't exist")
+                else:
+                    x=''
+                    for i in r:
+                        x = (i,r[i])
+                    self.recievers.insert(0,(x[0], x[1]))
+                    try:
+                        r_file = open("reciever.usr","a")
+                    except:
+                        open("reciever.usr","w+").close()
+                        r_file = open("reciever.usr","a")
+                    r_file.write("\n"+x[0]+" "+ x[1])
+                    r_file.close()
 
-                self.new_chat = "" 
-                self.add_chat.setText("")
-                self.refresh_w()
-            
+                    self.new_chat = "" 
+                    self.add_chat.setText("")
+                    self.refresh_w()
+            except:
+                pass    
 
     def set_n_grok(self, url):
         self.n_grok = url
@@ -260,18 +271,18 @@ class Window(QtWidgets.QTabWidget):
 
     def send_msg(self):
       if(self.msg != "" and (len(self.n_grok)>5)):
-        #print((self.n_grok+ '/' + str(self.selected_chat) + '/' + str(self.cur_usr[:10]) + '/' + self.msg))  
-        r= requests.get(self.n_grok+ '/' + str(self.cur_usr[:10]) + '/' + str(self.selected_chat) + '/' + self.msg)
-        #print(r)
-
-        #self.chats.insert(0,(self.msg,0))
-        f = open(str(self.selected_chat)+".ct","a") 
-        f.write("0 "+self.msg+"\n") 
-        f.close()
-        
-        self.msg = "" 
-        self.send_box.setText("")
-        self.refresh_c()
+        try:
+            r= requests.get(self.n_grok+ '/' + str(self.cur_usr[:10]) + '/' + str(self.selected_chat) + '/' + self.msg)
+            
+            f = open(str(self.selected_chat)+".ct","a") 
+            f.write("0 "+self.msg+"\n") 
+            f.close()
+            
+            self.msg = "" 
+            self.send_box.setText("")
+            self.refresh_c()
+        except:
+            pass
 
 
     def chat_select(self):
@@ -280,10 +291,12 @@ class Window(QtWidgets.QTabWidget):
         if(self.selected_chat!='0'):
             self.recievers_btns[self.recievers_phn.index(self.selected_chat)].setStyleSheet("QPushButton"
                                     "{"
+                                    "font-size: 20px;"
                                     "background-color : #409399;"
                                     "}"
                                     "QPushButton::pressed"
                                     "{"
+                                    "font-size: 20px;"
                                     "background-color : #409399;"
                                     "}"
                                     )
@@ -292,10 +305,12 @@ class Window(QtWidgets.QTabWidget):
         
         b.setStyleSheet("QPushButton"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #4d74bd;"
                                 "}"
                                 "QPushButton::pressed"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #409399;"
                                 "}"
                                 )
@@ -319,10 +334,13 @@ class Window(QtWidgets.QTabWidget):
                 #print('a')
                 self.recievers_btns[i].setStyleSheet("QPushButton"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #4d74bd;"
                                 "}"
+                                
                                 "QPushButton::pressed"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #409399;"
                                 "}"
                                 )
@@ -331,10 +349,12 @@ class Window(QtWidgets.QTabWidget):
                 #print('j')
                 self.recievers_btns[i].setStyleSheet("QPushButton"
                                 "{"
+                                "font-size: 20px;"
                                 "background-color : #409399;"
                                 "}"
                                 "QPushButton::pressed"
                                 "{"
+                                "font-size: 20px; letter-spacing: 1.3px;"
                                 "background-color : #409399;"
                                 "}"
                                 )
@@ -350,8 +370,6 @@ class Window(QtWidgets.QTabWidget):
             chats_file.close()
             chats_file = open(self.selected_chat+".ct","r")
         
-        #print(self.selected_chat)
-
         self.chats=[]
         for line in reversed(chats_file.readlines()):
             if(line!='\n'):
@@ -359,7 +377,6 @@ class Window(QtWidgets.QTabWidget):
         
         chats_file.close()
 
-        #print(self.chats)
 
     
         for i in reversed(range(self.c_form.count())):
@@ -375,22 +392,6 @@ class Window(QtWidgets.QTabWidget):
             else:
                 self.chat_labels[i].setAlignment(Qt.AlignLeft)
             self.c_form.addWidget(self.chat_labels[i])
-        #print(self.chats)
-        #print("hkl")
-    
+     
 
-        
 
-'''
-if __name__ == "__main__":
-    app = QApplication(sys.argv)
-    app.setStyleSheet("QLabel{font-size: 12pt;font-color: white;}")
-    app.setStyle("fusion")
-    custom_font = QFont()
-    custom_font.setWeight(12)
-    QApplication.setFont(custom_font, "QLabel")
-    window = Window()
-
-    window.show()
-    sys.exit(app.exec_())
-'''
